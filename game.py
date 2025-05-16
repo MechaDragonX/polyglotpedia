@@ -2,6 +2,7 @@ import json
 from mediawiki import MediaWiki
 from mediawiki.exceptions import DisambiguationError
 import wikipedia
+from wikipedia.exceptions import PageError
 
 class Game():
     def __init__(self, language='en'):
@@ -41,8 +42,9 @@ class Game():
     def compare_two(self):
         same = 'They\'re the same'
 
-        article_titles = None
+        article_titles = []
         articles = []
+        summaries = []
         # Generate until disambugation error does not occur
         generated = False
         while not generated:
@@ -55,8 +57,12 @@ class Game():
                     self.mediawiki.page(article_titles[0]),
                     self.mediawiki.page(article_titles[1])
                 ]
+                summaries.append(wikipedia.summary(articles[0].title, sentences=1))
+                summaries.append(wikipedia.summary(articles[1].title, sentences=1))
                 generated = True
-            except DisambiguationError as disambiguated:
+            except DisambiguationError:
+                pass
+            except PageError:
                 pass
 
         # Make list of language counts
@@ -94,7 +100,7 @@ class Game():
         #
         # C: They're the same
         print('Which of the following has more foreign language versions?\n')
-        print(f'A: {articles[0].title}\n{wikipedia.summary(articles[0].title, sentences=1)}\n\nB: {articles[1].title}\n{wikipedia.summary(articles[1].title, sentences=1)}\n\nC: {same}\n')
+        print(f'A: {article_titles[0]}\n{summaries[0]}\n\nB: {article_titles[1]}\n{summaries[1]}\n\nC: {same}\n')
 
         # Prompt user for choice and loop until accepted input is given
         response = ''
