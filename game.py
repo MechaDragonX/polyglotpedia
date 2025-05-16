@@ -35,6 +35,7 @@ class Game():
 
     # Gameplay functions
     def compare_two(self):
+        same = 'They\'re the same'
         # Pick to random articles
         article_titles = self.mediawiki.random(pages=2)
         # Make list of Page classes of those articles
@@ -59,10 +60,15 @@ class Game():
             answer = 1
         else:
             answer = 2
+        # Set value to answer_title for use when telling user what correct answer was
+        if answer != 2:
+            answer_title = articles[answer].title
+        else:
+            answer_title = same
 
         # Actually game portion
         print('Which of the following has more foreign language versions?')
-        print(f'A: {articles[0].title}\nB: {articles[1].title}\nC: They\'re the same\n')
+        print(f'A: {articles[0].title}\nB: {articles[1].title}\nC: {same}\n')
 
         # Prompt user for choice and loop until accepted input is given
         response = ''
@@ -82,10 +88,16 @@ class Game():
             correct = True
 
         # Tell user if they were correct or not
-        print(f'You answered {response.upper()}, ', end='')
+        # What they answered
+        if self.response_letter2number[response] != 2:
+            print(f'You answered "{articles[self.response_letter2number[response]].title}", ', end='')
+        else:
+            print(f'You answered "{same}", ', end='')
+        # Response if correct vs not
         if correct:
             print('and that was correct!')
         else:
             print('and that was incorrect!')
+            print(f'The correct answer was, {response.upper()}: {answer_title}')
         # End program
         print('\nThanks for playing!')
