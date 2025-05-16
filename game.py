@@ -37,6 +37,7 @@ class Game():
 
 
     # Gameplay functions
+    # Single compare two question
     def compare_two(self):
         same = 'They\'re the same'
 
@@ -124,5 +125,21 @@ class Game():
         else:
             print('and that was incorrect!')
             print(f'The correct answer was, {self.response_number2letter[answer].upper()}: {answer_title}')
+        print()
+        print()
+
+        return correct
+
+    def compare_two_10(self):
+        score = 0
+
+        i = 0
+        for i in range(10):
+            print(f'Question {i + 1}:')
+            if self.compare_two():
+                score += 1
+
+        print(f'Score: {score}/10')
+
         # End program
         print('\nThanks for playing!')
