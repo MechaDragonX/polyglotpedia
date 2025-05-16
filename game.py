@@ -1,6 +1,6 @@
 import json
 from mediawiki import MediaWiki
-from wikipedia.exceptions import DisambiguationError
+from mediawiki.exceptions import DisambiguationError
 
 class Game():
     def __init__(self, language='en'):
