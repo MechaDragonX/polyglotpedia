@@ -1,5 +1,6 @@
 import json
 from mediawiki import MediaWiki
+from wikipedia.exceptions import DisambiguationError
 
 class Game():
     def __init__(self, language='en'):
@@ -10,6 +11,7 @@ class Game():
             'b': 1,
             'c': 2
         }
+        self.response_number2letter = { v: k for k, v in self.response_letter2number.items() }
 
         if language == 'en':
             self.lang_en = {}
@@ -98,6 +100,6 @@ class Game():
             print('and that was correct!')
         else:
             print('and that was incorrect!')
-            print(f'The correct answer was, {response.upper()}: {answer_title}')
+            print(f'The correct answer was, {self.response_number2letter[answer].upper()}: {answer_title}')
         # End program
         print('\nThanks for playing!')
