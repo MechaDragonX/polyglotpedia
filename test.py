@@ -14,7 +14,8 @@ def gen_langlist_en(codelist):
     langlist = []
     for code in codelist:
         langlist.append(lang_en[code])
-    return langlist
+    # return sorted by English name
+    return sorted(langlist)
 
 
 
