@@ -38,13 +38,25 @@ class Game():
     # Gameplay functions
     def compare_two(self):
         same = 'They\'re the same'
-        # Pick to random articles
-        article_titles = self.mediawiki.random(pages=2)
-        # Make list of Page classes of those articles
-        articles = [
-            self.mediawiki.page(article_titles[0]),
-            self.mediawiki.page(article_titles[1])
-        ]
+
+        article_titles = None
+        articles = []
+        # Generate until disambugation error does not occur
+        generated = False
+        while not generated:
+            # Pick to random articles
+            article_titles = self.mediawiki.random(pages=2)
+            # Make list of Page classes of those articles
+            try:
+                # Make list of Page classes of those articles
+                articles = [
+                    self.mediawiki.page(article_titles[0]),
+                    self.mediawiki.page(article_titles[1])
+                ]
+                generated = True
+            except DisambiguationError as disambiguated:
+                pass
+
         # Make list of language counts
         article_counts = [
             len(list(articles[0].langlinks.keys())),
