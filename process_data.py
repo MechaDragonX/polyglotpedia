@@ -38,7 +38,7 @@ with open('data/lang-en.txt', 'r', encoding='utf-8') as read:
 for i in range(len(lang_en_text)):
     lang_en_text[i] = lang_en_text[i][:-1]
 
-# Create code to English name dict
+# Create 'lang code: English name' dict
 lang_en = lang_native
 item = None
 for i in range(len(lang_en_text)):
