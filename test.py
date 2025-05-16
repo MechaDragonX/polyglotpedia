@@ -1,6 +1,5 @@
 import json
 from mediawiki import MediaWiki
-import random
 import wikipedia
 
 lang_en = {}
