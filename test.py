@@ -24,8 +24,9 @@ import_lang_en('data/lang-en.json')
 
 mediawiki = MediaWiki()
 # List all languages and number of them for given article
-article = mediawiki.page(input())
-print(article.title)
+article = mediawiki.page(input('Search: '))
+print()
+print(f'Title: {article.title}')
 langlist = gen_langlist_en(list(article.langlinks.keys()))
 print(f'Languages: {langlist}')
 print(f'Language Count: {len(langlist)}')
