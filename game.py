@@ -99,13 +99,20 @@ class Game():
         # Prompt user for choice and loop until accepted input is given
         response = ''
         while True:
-            response = input(f'Please type "A", "B", "C": ').lower()
-            if response == 'a':
+            response = input(f'Please type "A", "B", "C", or "1", "2", "3": ').lower()
+            if response == 'a' or response == '1':
                 break
-            elif response == 'b':
+            elif response == 'b' or response == '2':
                 break
-            elif response == 'c':
+            elif response == 'c' or response == '3':
                 break
+        if response.isdigit():
+            if response == '1':
+                response = 'a'
+            elif response == '2':
+                response = 'b'
+            elif response == '3':
+                response = 'c'
         print()
 
         # Check if user is correct
