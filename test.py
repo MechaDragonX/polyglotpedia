@@ -21,12 +21,12 @@ import wikipedia
 
 # Generate missing language names
 # code_lang_list = list(wikipedia.languages().keys())
-# with open('lang-code.txt', 'w') as write:
+# with open('data/lang-code.txt', 'w') as write:
 #     for item in code_lang_list:
 #         write.write(f'{item}\n')
 
 # wiki_lang_list = None
-# with open('lang-wiki.txt', 'r') as read:
+# with open('data/lang-wiki.txt', 'r') as read:
 #     wiki_lang_list = read.readlines()
 # for i in range(len(wiki_lang_list)):
 #     wiki_lang_list[i] = wiki_lang_list[i][:-1]
@@ -36,21 +36,21 @@ import wikipedia
 # print(wiki_lang_list)
 # print(diff)
 
-# with open('lang-missing.txt', 'w') as write:
+# with open('data/lang-missing.txt', 'w') as write:
 #     for item in diff:
 #         write.write(f'{item}\n')
 
 
 # Write to code to native names dict to JSON
 lang_native = wikipedia.languages()
-with open('lang-en.json', 'w') as write:
+with open('data/lang-en.json', 'w') as write:
     json.dump(lang_native, write, indent=4)
 
 # Import text
 # Format:
 # <code>\t<English name>
 lang_en_text = None
-with open('lang-en.txt', 'r', encoding='utf-8') as read:
+with open('data/lang-en.txt', 'r', encoding='utf-8') as read:
     lang_en_text = read.readlines()
 # Remove \n at end
 for i in range(len(lang_en_text)):
@@ -64,5 +64,5 @@ for i in range(len(lang_en_text)):
     lang_en.update({item[0]: item[1]})
 
 # Write to JSON
-with open('lang-en.json', 'w') as write:
+with open('data/lang-en.json', 'w') as write:
     json.dump(lang_en, write, indent=4)
