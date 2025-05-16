@@ -1,6 +1,7 @@
 import json
 from mediawiki import MediaWiki
 from mediawiki.exceptions import DisambiguationError
+import wikipedia
 
 class Game():
     def __init__(self, language='en'):
@@ -81,8 +82,18 @@ class Game():
             answer_title = same
 
         # Actually game portion
-        print('Which of the following has more foreign language versions?')
-        print(f'A: {articles[0].title}\nB: {articles[1].title}\nC: {same}\n')
+        # Format:
+        # Which of the following has more foreign language versions?
+        #
+        # A: <title>
+        # <1 sentence summary>
+        #
+        # B:  <title>
+        # <1 sentence summary>
+        #
+        # C: They're the same
+        print('Which of the following has more foreign language versions?\n')
+        print(f'A: {articles[0].title}\n{wikipedia.summary(articles[0].title, sentences=1)}\n\nB: {articles[1].title}\n{wikipedia.summary(articles[1].title, sentences=1)}\n\nC: {same}\n')
 
         # Prompt user for choice and loop until accepted input is given
         response = ''
