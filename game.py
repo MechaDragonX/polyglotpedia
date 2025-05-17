@@ -8,15 +8,28 @@ class Game():
     def __init__(self, language='en'):
         self.mediawiki = MediaWiki()
         # Lookup table for response letter to number for use in code
-        self.response_letter2number = {
+        self.RESPONSE_LETTER2NUMBER = {
             'a': 0,
             'b': 1,
             'c': 2
         }
-        self.response_number2letter = { v: k for k, v in self.response_letter2number.items() }
+        # This apparently reverses a dict
+        self.RESPONSE_NUMBER2LETTER = { v: k for k, v in self.RESPONSE_LETTER2NUMBER.items() }
+        self.VALID_RESPONSES = [
+            'a',
+            'b',
+            'c',
+            '1',
+            '2',
+            '3',
+            'q',
+            'quit'
+        ]
+        # Option for if lang counts are the same
+        self.same = 'They\'re the same'
 
         if language == 'en':
-            self.lang_en = {}
+            self.LANG_EN = {}
             # Import 'lang code: English name' dict
             self.import_lang_en('data/lang-en.json')
 
@@ -25,23 +38,67 @@ class Game():
     # Take JSON for 'lang code: English name' and import as dict
     def import_lang_en(self, path):
         with open(path) as file:
-            self.lang_en = json.load(file)
+            self.LANG_EN = json.load(file)
 
     # Take list of lang codes and turn it into list of English names
     # Used with list(MediaWiki.Page.langlinks.keys())
     def gen_langlist_en(self, codelist):
         langlist = []
         for code in codelist:
-            langlist.append(self.lang_en[code])
+            langlist.append(self.LANG_EN[code])
         # return sorted by English name
         return sorted(langlist)
 
 
     # Gameplay functions
+    # Figure out the correct answer
+    def gen_correct_answer(self, lang_counts):
+        answer = 0
+
+        if lang_counts[0] > lang_counts[1]:
+            answer = 0
+        elif lang_counts[1] > lang_counts[0]:
+            answer = 1
+        else:
+            answer = 2
+
+        return answer
+
+
+    # Prompt user for choice and loop until accepted input is given
+    # Then validate response
+    def get_response(self):
+        response = ''
+        while response not in self.VALID_RESPONSES:
+            response = input(f'Please type "A", "B", "C", or "1", "2", "3": ').lower()
+            if response == 'q' or response == 'quit':
+                return 'q'
+
+        if response.isdigit():
+            response = self.RESPONSE_NUMBER2LETTER[int(response)]
+        print()
+
+        return response
+
+
+    # Tell user if they were correct or not
+    def print_results(self, article_titles, response, correct, answer, answer_title):
+        # What they answered
+        if self.RESPONSE_LETTER2NUMBER[response] != 2:
+            print(f'You answered "{article_titles[self.RESPONSE_LETTER2NUMBER[response]]}", ', end='')
+        else:
+            print(f'You answered "{self.same}", ', end='')
+        # Response if correct vs not
+        if correct:
+            print('and that was correct!')
+        else:
+            print('and that was incorrect!')
+            print(f'The correct answer was, {self.RESPONSE_NUMBER2LETTER[answer].upper()}: {answer_title}')
+        print('\n')
+
+
     # Single compare two question
     def compare_two(self):
-        same = 'They\'re the same'
-
         article_titles = []
         articles = []
         summaries = []
@@ -64,27 +121,22 @@ class Game():
                 pass
 
         # Make list of language counts
-        article_counts = [
+        lang_counts = [
             len(list(articles[0].langlinks.keys())),
             len(list(articles[1].langlinks.keys()))
         ]
+
         # Make list of language names in English
-        article0_langlist = self.gen_langlist_en(list(articles[0].langlinks.keys()))
-        article1_langlist = self.gen_langlist_en(list(articles[1].langlinks.keys()))
+        # article0_langlist = self.gen_langlist_en(list(articles[0].langlinks.keys()))
+        # article1_langlist = self.gen_langlist_en(list(articles[1].langlinks.keys()))
 
         # Figure out the correct answer
-        answer = 0
-        if article_counts[0] > article_counts[1]:
-            answer = 0
-        elif article_counts[1] > article_counts[0]:
-            answer = 1
-        else:
-            answer = 2
+        answer = self.gen_correct_answer(lang_counts)
         # Set value to answer_title for use when telling user what correct answer was
         if answer != 2:
-            answer_title = articles[answer].title
+            answer_title = article_titles[answer]
         else:
-            answer_title = same
+            answer_title = self.same
 
         # Actually game portion
         # Format:
@@ -98,52 +150,25 @@ class Game():
         #
         # C: They're the same
         print('Which of the following has more foreign language versions?\n')
-        print(f'A: {article_titles[0]}\n{summaries[0]}\n\nB: {article_titles[1]}\n{summaries[1]}\n\nC: {same}\n')
+        print(f'A: {article_titles[0]}\n{summaries[0]}\n\nB: {article_titles[1]}\n{summaries[1]}\n\nC: {self.same}\n')
 
         # Prompt user for choice and loop until accepted input is given
-        response = ''
-        while True:
-            response = input(f'Please type "A", "B", "C", or "1", "2", "3": ').lower()
-            if response == 'a' or response == '1':
-                break
-            elif response == 'b' or response == '2':
-                break
-            elif response == 'c' or response == '3':
-                break
-            elif response == 'q' or response == 'quit':
-                # return val is bool of correctness, so -1 represents quit
-                return -1
-
-        if response.isdigit():
-            if response == '1':
-                response = 'a'
-            elif response == '2':
-                response = 'b'
-            elif response == '3':
-                response = 'c'
-        print()
+        # Then validate response
+        response = self.get_response()
+        if response == 'q':
+            # return val is bool of correctness, so -1 represents quit
+            return -1
 
         # Check if user is correct
         correct = False
-        if self.response_letter2number[response] == answer:
+        if self.RESPONSE_LETTER2NUMBER[response] == answer:
             correct = True
 
         # Tell user if they were correct or not
-        # What they answered
-        if self.response_letter2number[response] != 2:
-            print(f'You answered "{articles[self.response_letter2number[response]].title}", ', end='')
-        else:
-            print(f'You answered "{same}", ', end='')
-        # Response if correct vs not
-        if correct:
-            print('and that was correct!')
-        else:
-            print('and that was incorrect!')
-            print(f'The correct answer was, {self.response_number2letter[answer].upper()}: {answer_title}')
-        print()
-        print()
+        self.print_results(article_titles, response, correct, answer, answer_title)
 
         return correct
+
 
     def compare_two_10(self):
         score = 0
@@ -167,8 +192,9 @@ class Game():
         # Used for handling quit
         return 0
 
+
     def print_lives(self, lives):
-        # not the emoji
+        # not the emoj
         char = '♥'
         result = ''
 
@@ -180,6 +206,7 @@ class Game():
                 result += char
 
         print(f'Lives: {result}')
+
 
     def compare_two_inf(self):
         # 3 strikes and out lol
@@ -193,9 +220,9 @@ class Game():
             answer = self.compare_two()
             if answer == False:
                 lives -= 1
-            # Recieved quit signal
             elif answer == True:
                 score += 1
+            # Recieved quit signal
             else:
                 return 1
 
