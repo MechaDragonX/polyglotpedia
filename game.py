@@ -57,12 +57,10 @@ class Game():
                     self.mediawiki.page(article_titles[0]),
                     self.mediawiki.page(article_titles[1])
                 ]
-                summaries.append(wikipedia.summary(articles[0].title, sentences=1))
-                summaries.append(wikipedia.summary(articles[1].title, sentences=1))
+                summaries.append(articles[0].content.split('\n')[0])
+                summaries.append(articles[1].content.split('\n')[0])
                 generated = True
             except DisambiguationError:
-                pass
-            except PageError:
                 pass
 
         # Make list of language counts
