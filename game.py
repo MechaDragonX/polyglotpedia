@@ -110,6 +110,10 @@ class Game():
                 break
             elif response == 'c' or response == '3':
                 break
+            elif response == 'q' or response == 'quit':
+                # return val is bool of correctness, so -1 represents quit
+                return -1
+
         if response.isdigit():
             if response == '1':
                 response = 'a'
@@ -145,12 +149,62 @@ class Game():
         score = 0
 
         i = 0
+        answer = -1
         for i in range(10):
             print(f'Question {i + 1}:')
-            if self.compare_two():
+            answer = self.compare_two()
+            if answer == True:
                 score += 1
+            # Recieved quit signal
+            elif answer == -1:
+                return 1
 
         print(f'Score: {score}/10')
 
         # End program
         print('\nThanks for playing!')
+
+        # Used for handling quit
+        return 0
+
+    def print_lives(self, lives):
+        # not the emoji
+        char = '♥'
+        result = ''
+
+        i = 0
+        for i in range(lives):
+            if i != lives - 1:
+                result += f'{char} '
+            else:
+                result += char
+
+        print(f'Lives: {result}')
+
+    def compare_two_inf(self):
+        # 3 strikes and out lol
+        lives = 3
+        score = 0
+
+        i = 0
+        while lives > 0:
+            print(f'Question {i + 1}:')
+            self.print_lives(lives)
+            answer = self.compare_two()
+            if answer == False:
+                lives -= 1
+            # Recieved quit signal
+            elif answer == True:
+                score += 1
+            else:
+                return 1
+
+            i += 1
+
+        print(f'Score: {score}')
+
+        # End program
+        print('\nThanks for playing!')
+
+        # Used for handling quit
+        return 0
