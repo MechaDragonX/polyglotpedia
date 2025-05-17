@@ -1,7 +1,7 @@
 from game import Game
-from ui_interface import UIInterface
+from ui import UI
 
-class CLI(UIInterface):
+class CLI(UI):
     VALID_RESPONSES = [
         '10',
         'i',
@@ -30,6 +30,17 @@ class CLI(UIInterface):
 
         if exit_code == 1:
             quit()
+
+    @staticmethod
+    def input(message=''):
+        input(message)
+
+    @staticmethod
+    def output(message='', end='\n'):
+        if end != '\n':
+            print(message, end=end)
+        else:
+            print(message)
 
     @staticmethod
     def quit():

@@ -1,3 +1,4 @@
+from ui import UI
 import json
 from mediawiki import MediaWiki
 from mediawiki.exceptions import DisambiguationError
@@ -5,7 +6,8 @@ import wikipedia
 from wikipedia.exceptions import PageError
 
 class Game():
-    def __init__(self, language='en'):
+    def __init__(self, ui, language='en'):
+        self.ui = ui
         self.mediawiki = MediaWiki()
         # Lookup table for response letter to number for use in code
         self.RESPONSE_LETTER2NUMBER = {
@@ -76,7 +78,7 @@ class Game():
 
         if response.isdigit():
             response = self.RESPONSE_NUMBER2LETTER[int(response)]
-        print()
+        self.ui.output()
 
         return response
 
@@ -85,16 +87,16 @@ class Game():
     def print_results(self, article_titles, response, correct, answer, answer_title):
         # What they answered
         if self.RESPONSE_LETTER2NUMBER[response] != 2:
-            print(f'You answered "{article_titles[self.RESPONSE_LETTER2NUMBER[response]]}", ', end='')
+            self.ui.output(f'You answered "{article_titles[self.RESPONSE_LETTER2NUMBER[response]]}", ', '')
         else:
-            print(f'You answered "{self.same}", ', end='')
+            self.ui.output(f'You answered "{self.same}", ', '')
         # Response if correct vs not
         if correct:
-            print('and that was correct!')
+            self.ui.output('and that was correct!')
         else:
-            print('and that was incorrect!')
-            print(f'The correct answer was, {self.RESPONSE_NUMBER2LETTER[answer].upper()}: {answer_title}')
-        print('\n')
+            self.ui.output('and that was incorrect!')
+            self.ui.output(f'The correct answer was, {self.RESPONSE_NUMBER2LETTER[answer].upper()}: {answer_title}')
+        self.ui.output('\n')
 
 
     # Single compare two question
@@ -149,8 +151,8 @@ class Game():
         # <1 sentence summary>
         #
         # C: They're the same
-        print('Which of the following has more foreign language versions?\n')
-        print(f'A: {article_titles[0]}\n{summaries[0]}\n\nB: {article_titles[1]}\n{summaries[1]}\n\nC: {self.same}\n')
+        self.ui.output('Which of the following has more foreign language versions?\n')
+        self.ui.output(f'A: {article_titles[0]}\n{summaries[0]}\n\nB: {article_titles[1]}\n{summaries[1]}\n\nC: {self.same}\n')
 
         # Prompt user for choice and loop until accepted input is given
         # Then validate response
@@ -176,7 +178,7 @@ class Game():
         i = 0
         answer = -1
         for i in range(10):
-            print(f'Question {i + 1}:')
+            self.ui.output(f'Question {i + 1}:')
             answer = self.compare_two()
             if answer == True:
                 score += 1
@@ -184,10 +186,10 @@ class Game():
             elif answer == -1:
                 return 1
 
-        print(f'Score: {score}/10')
+        self.ui.output(f'Score: {score}/10')
 
         # End program
-        print('\nThanks for playing!')
+        self.ui.output('\nThanks for playing!')
 
         # Used for handling quit
         return 0
@@ -205,7 +207,7 @@ class Game():
             else:
                 result += char
 
-        print(f'Lives: {result}')
+        self.ui.output(f'Lives: {result}')
 
 
     def compare_two_inf(self):
@@ -215,7 +217,7 @@ class Game():
 
         i = 0
         while lives > 0:
-            print(f'Question {i + 1}:')
+            self.ui.output(f'Question {i + 1}:')
             self.print_lives(lives)
             answer = self.compare_two()
             if answer == False:
@@ -228,10 +230,10 @@ class Game():
 
             i += 1
 
-        print(f'Score: {score}')
+        self.ui.output(f'Score: {score}')
 
         # End program
-        print('\nThanks for playing!')
+        self.ui.output('\nThanks for playing!')
 
         # Used for handling quit
         return 0
