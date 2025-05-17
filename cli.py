@@ -11,7 +11,7 @@ class CLI(UI):
 
     @staticmethod
     def run(game):
-        print('Would you like to play a game with 10 questions, or see who long you can surive with 3 lives?')
+        CLI.output('Would you like to play a game with 10 questions, or see who long you can surive with 3 lives?')
         response = ''
         exit_code = -1
         while response not in CLI.VALID_RESPONSES:
